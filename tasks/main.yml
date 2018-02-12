@@ -1,40 +1,49 @@
 ---
 # tasks file for squid
 - name: Install squid
-  package: 
+  become: yes
+  package:
     name: squid
     state: present
 
 - name: Enable squid service
+  become: yes
   service:
     name: squid
     enabled: yes
 
 - iptables:
-  table: nat
-  chain: PREROUTING
-  in_interface: eth1
-  protocol: tcp
-  match: tcp
-  destination_port: 80
-  jump: DNAT
-  to_destination: 192.168.1.1:3128
-  comment: Redirect web traffic to port 3128
-become: yes
+    destination: 169.254.169.254
+    chain: OUTPUT
+    jump: ACCEPT
+  become: yes
 
 - iptables:
-  table: nat
-  chain: PREROUTING
-  in_interface: eth0
-  protocol: tcp
-  match: tcp
-  destination_port: 80
-  jump: REDIRECT
-  to_ports: 3128
-  comment: Redirect web traffic to port 3128
-become: yes
+    table: nat
+    chain: OUTPUT
+#   in_interface: eth0
+    protocol: tcp
+    match: tcp
+    destination_port: 80
+    jump: DNAT
+    to_destination: 127.0.0.1:3128
+    comment: Redirect web traffic to port 3128
+  become: yes
+
+- iptables:
+    table: nat
+    chain: PREROUTING
+    in_interface: eth0
+    protocol: tcp
+    match: tcp
+    destination_port: 80
+    jump: REDIRECT
+    to_ports: 3128
+    comment: Redirect web traffic to port 3128
+  become: yes
 
 - name: Install squid.conf
+  become: yes
   template:
     src: squid.conf.j2
     dest: /etc/squid/squid.conf
@@ -44,4 +53,3 @@ become: yes
     validate: squid -k parse -f %s
   notify:
     - restart squid
- 

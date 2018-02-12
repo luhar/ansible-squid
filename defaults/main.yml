@@ -21,11 +21,13 @@ squid_http_access:
   - deny CONNECT !SSL_ports
   - allow localhost manager # Only allow cachemgr access from localhost
   - deny manager
-  - allow localnet
+# - allow localnet
   - allow localhost
   - deny all
 
-squid_http_ports_intercept: #transparent proxying
+#squid_http_ports_intercept: #transparent proxying
+#  - 3128
+squid_http_ports: #transparent proxying
   - 3128
 
 squid_coredump_dir: /var/cache/squid

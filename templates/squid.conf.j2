@@ -27,7 +27,7 @@ http_access {{ item }}
 {% endif %}
 
 {% if squid_http_ports %}
-  {% for item in squid_http_ports_intercept %}
+  {% for item in squid_http_ports %}
 http_port {{ item }} intercept
   {% endfor %}
 {% endif %}
