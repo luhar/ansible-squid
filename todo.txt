@@ -1,0 +1,38 @@
+http_port 3128 intercept #transparent proxying
+http://www.squid-cache.org/Doc/config/http_port/
+
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to 192.168.1.1:3128
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3128
+iptables –t nat -A POSTROUTING –out-interface eth1 -j MASQUERADE # fwd the non-http traffic
+
+http://docs.ansible.com/ansible/latest/iptables_module.html
+https://www.cyberciti.biz/tips/linux-setup-transparent-proxy-squid-howto.html
+https://doxfer.webmin.com/Webmin/Squid_Interception_Proxying
+http://xmodulo.com/how-to-set-up-transparent-proxy-on-linux.html
+http://linuxtechlab.com/squid-transparent-proxy-server-complete-configuration/ 
+- net.ipv4.ip_forward = 1
+https://monoinfinito.wordpress.com/series/setting-up-a-linux-gatewayrouter-a-guide-for-non-network-admins/
+
+acl nobumpSites ssl::server_name "/etc/squid/nobumpSites.txt"
+ssl_bump peek step1 all    # at step 1 we're peeking at client TLS-request in order to find the SNI
+ssl_bump peek step2 nobumpSites   # here we're peeking at server certificate
+ssl_bump splice step3 nobumpSites # here we're splicing connections which match the whitelist
+ssl_bump bump # finally we're bumping all other SSL connections
+
+https://help.ubuntu.com/community/Squid
+
+https://veesp.com/en/blog/how-to-setup-squid-on-ubuntu -> explanations and logging
+
+
+
+
+
+Firewalls -> Proxy Servers -> Transparent Proxy
+https://en.wikipedia.org/wiki/Firewall_(computing)
+
+https://github.com/mrlesmithjr/ansible-squid/blob/master/defaults/main.yml -> another playbook
+
+https://serversforhackers.com/c/firewalls-basics-of-iptables -> all about iptables
+
+mutiple proxies -> http://www.christianschenk.org/blog/using-a-parent-proxy-with-squid/
+
