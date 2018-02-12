@@ -1,0 +1,65 @@
+#jinja2: lstrip_blocks: "True (or False)", trim_blocks: "True (or False)"
+# {{ ansible_managed }}
+{% if squid_acl_localnet %}
+  {% for item in squid_acl_localnet %}
+acl localnet src {{ item }}
+  {% endfor %}
+{% endif %}
+
+{% if squid_default_acl %}
+# Default acl
+  {% for item in squid_default_acl %}
+acl {{ item }}
+  {% endfor %}
+{% endif %}
+
+{% if squid_custom_acl is defined %}
+# Custom acl
+  {% for item in squid_custom_acl %}
+acl {{ item }}
+  {% endfor %}
+{% endif %}
+
+{% if squid_http_access %}
+  {% for item in squid_http_access %}
+http_access {{ item }}
+  {% endfor %}
+{% endif %}
+
+{% if squid_http_ports %}
+  {% for item in squid_http_ports_intercept %}
+http_port {{ item }} intercept
+  {% endfor %}
+{% endif %}
+
+{% if squid_https_ports is defined %}
+  {% for item in squid_https_ports %}
+https_port {{ item }}
+  {% endfor %}
+{% endif %}
+
+{% if squid_access_log is defined %}
+access_log {{ squid_access_log }}
+{% endif %}
+
+{% if squid_cache_dir is defined %}
+cache_dir {{ squid_cache_dir }}
+{% endif %}
+
+{% if squid_coredump_dir %}
+coredump_dir {{ squid_coredump_dir }}
+{% endif %}
+
+# Custom refresh patterns
+{% if squid_custom_refresh_patterns is defined %}
+  {% for item in squid_custom_refresh_patterns %}
+refresh_pattern {{ item }}
+  {% endfor %}
+{% endif %}
+
+# Default refresh patterns
+{% if squid_default_refresh_patterns %}
+  {% for item in squid_default_refresh_patterns %}
+refresh_pattern {{ item }}
+  {% endfor %}
+{% endif %}

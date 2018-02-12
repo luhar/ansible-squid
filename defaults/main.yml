@@ -1,0 +1,38 @@
+---
+# defaults file for squid
+squid_acl_localnet: []
+
+squid_default_acl: 
+  - SSL_ports port 443
+  - Safe_ports port 80          # http
+  - Safe_ports port 21          # ftp
+  - Safe_ports port 443         # https
+  - Safe_ports port 70          # gopher
+  - Safe_ports port 210         # wais
+  - Safe_ports port 280         # http-mgmt
+  - Safe_ports port 488         # gss-http
+  - Safe_ports port 591         # filemaker
+  - Safe_ports port 777         # multiling http
+  - Safe_ports port 1025-65535  # unregistered ports
+  - CONNECT method CONNECT
+
+squid_http_access:
+  - deny !Safe_ports
+  - deny CONNECT !SSL_ports
+  - allow localhost manager # Only allow cachemgr access from localhost
+  - deny manager
+  - allow localnet
+  - allow localhost
+  - deny all
+
+squid_http_ports_intercept: #transparent proxying
+  - 3128
+
+squid_coredump_dir: /var/cache/squid
+
+squid_default_refresh_patterns:
+  - '^ftp:       1440    20% 10080'
+  - '^gopher:    1440    0%  1440'
+  - '-i (/cgi-bin/|\?) 0 0%  0'
+  - '.           0       20% 4320'
+
